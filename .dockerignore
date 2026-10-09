@@ -1,0 +1,11 @@
+.git
+.venv
+.venv-setup-check
+.env
+.env.*
+!.env.example
+__pycache__
+*.py[cod]
+.pytest_cache
+data
+.DS_Store
