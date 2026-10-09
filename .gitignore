@@ -1,0 +1,9 @@
+.venv/
+.venv-setup-check/
+.env
+__pycache__/
+*.py[cod]
+.pytest_cache/
+data/raw/
+data/processed/
+.DS_Store
