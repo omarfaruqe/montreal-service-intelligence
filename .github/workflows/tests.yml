@@ -1,0 +1,61 @@
+name: Backend tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      DATABASE_URL: postgresql+psycopg://montreal_app:ci_test_password@127.0.0.1:5432/montreal_services_ci
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: montreal_app
+          POSTGRES_PASSWORD: ci_test_password
+          POSTGRES_DB: montreal_services_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U montreal_app -d montreal_services_ci"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip check
+
+      - name: Verify database connection
+        run: python -m scripts.test_db_connection
+
+      - name: Apply database migrations
+        run: python -m alembic upgrade head
+
+      - name: Check model and migration consistency
+        run: python -m alembic check
+
+      - name: Run backend tests
+        run: python -m pytest -q tests
