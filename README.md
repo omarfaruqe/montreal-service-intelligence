@@ -387,6 +387,56 @@ Run the database connection script, then rerun pytest.
 A public deployment needs separate credential management,
 deployment configuration and operational controls.
 
+## Run with Docker Compose
+
+After completing the initial data import, start PostgreSQL, the API,
+and the dashboard from the project root:
+
+```bash
+docker compose up --build -d
+```
+
+Compose runs database migrations before starting the API.
+
+- Dashboard: http://localhost:8501
+- API documentation: http://localhost:8000/docs
+
+### Check service status
+
+```bash
+docker compose ps -a
+```
+
+The migration service should exit with code 0. PostgreSQL, the API,
+and the dashboard should remain running.
+
+### View logs
+
+```bash
+docker compose logs --tail=100 migrate api dashboard
+```
+
+### Stop the application
+
+```bash
+docker compose down
+```
+
+The database remains stored in the named volume. Running
+`docker compose down -v` deletes that volume and its imported records.
+
+### Rebuild after code or dependency changes
+
+```bash
+docker compose up --build -d
+```
+
+### Dataset setup
+
+The Docker image excludes the raw dataset. A new installation still
+requires the data download and import described earlier in this README.
+Starting the containers applies migrations but does not import records.
+
 ## AI Assistance
 
 AI assistance was used to develop code, tests, documentation
