@@ -390,5 +390,4 @@ deployment configuration and operational controls.
 ## AI Assistance
 
 AI assistance was used to develop code, tests, documentation
-and troubleshooting guidance. The developer ran the application,
-verified import totals and executed the automated test suite.
+and troubleshooting guidance.
